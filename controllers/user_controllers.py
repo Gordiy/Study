@@ -3,7 +3,7 @@ from .file_controllers import write_json_file, read_json_file
 
 
 def find_user_db(user_id):
-    path = f"{os.getcwd()}/users/users.json"
+    path = f"{os.getcwd()}/temp/users.json"
     data = read_json_file(path)
     user = None
     if data and 'users' in data:
@@ -14,14 +14,14 @@ def find_user_db(user_id):
     return user
 
 def create_user_db(user):
-    path = f"{os.getcwd()}/users/users.json"
+    path = f"{os.getcwd()}/temp/users.json"
     data = read_json_file(path)
     if data and 'users' in data:
-        users = data['users'].append(user)
+        data['users'].append(user.get_user())
     else: 
-        users = {'users': [user.get_user()]}
+        data = {'users': [user.get_user()]}
 
-    write_json_file(path, users)
+    write_json_file(path, data)
 
 def remove_user_db(user_id):
     pass
