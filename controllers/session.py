@@ -26,9 +26,9 @@ class Session:
         }
 
     def time_expiration(self, hours=1):
-        current_date_time = datetime.datetime.now()
+        current_date_time = datetime.datetime.utcnow()
         future_date_time = current_date_time + datetime.timedelta(hours=hours)
-        return future_date_time
+        return future_date_time.strftime("%a, %d %b %Y %H:%M:%S GMT")
 
     @staticmethod
     def get_random_string(length):
