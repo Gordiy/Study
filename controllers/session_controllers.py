@@ -8,9 +8,10 @@ def find_session_db(session_id):
     data = read_json_file(path)
     session = None
     if data and "sessions" in data:
-        for i in range(len(data)):
+        for i in range(len(data["sessions"])):
             if session_id in data["sessions"][i]:
-                session = data[i]
+                session = data["sessions"][i]
+                break
 
     return session
 
@@ -29,12 +30,12 @@ def remove_session_db(session_id):
     path = f"{os.getcwd()}/temp/sessions.json"
     status = False
     sessions = read_json_file(path)
-    if sessions and sessions in sessions:
+    if sessions and "sessions" in sessions:
         sessions = sessions["sessions"]
-        for i in range(sessions):
-            if sessions[i][session_id]:
+        for i in range(len(sessions)):
+            if session_id in sessions[i]:
                 del sessions[i]
                 status = True
                 break
 
-        write_json_file(path)
+        write_json_file(path, sessions)
