@@ -8,9 +8,10 @@ def find_user_db(user_id):
     data = read_json_file(path)
     user = None
     if data and "users" in data:
-        for i in range(len(data)):
+        for i in range(len(data["users"])):
             if user_id in data["users"][i]:
                 user = data["users"][i]
+                break
 
     return user
 
@@ -26,7 +27,7 @@ def find_user_by_username_db(username):
             for k in data[i]:
                 u_name = data[i][k]["username"]
                 if u_name.lower() == username.lower():
-                    user = data[i]
+                    user = {'user_id': k, "username": u_name, "password": data[i][k]["password"]}
                     found = True
                     break
             if found:
