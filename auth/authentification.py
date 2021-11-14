@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import Blueprint, Response, redirect, render_template, request
 
 from controllers.session import Session
-from controllers.session_controllers import create_session_db, find_session_db
+from controllers.session_controllers import create_session_db, find_session_db, remove_session_db
 from controllers.user import User
 from controllers.user_controllers import (create_user_db,
                                           find_user_by_username_db,
@@ -59,19 +59,24 @@ def login():
 @bp_auth.route("profile/", methods=["POST"])
 def profile():
     if "session-id" in request.cookies:
-        time_now = int(datetime.utcnow().timestamp())
-        session_datetime = datetime.strptime(
-            request.cookies["Expires"], "%a, %d %b %Y %H:%M:%S GMT"
-        )
-        session_time = int(session_datetime.timestamp())
+        session = find_session_db(request.cookies["session-id"])
+        if session:
+            time_now = int(datetime.utcnow().timestamp())
+            session_datetime = datetime.strptime(
+                request.cookies["Expires"], "%a, %d %b %Y %H:%M:%S GMT"
+            )
+            session_time = int(session_datetime.timestamp())
 
-        if session_time > time_now:
-            user = find_user_db(request.form["user_id"])
-            if user:
-                return {"status": "success", "user": str(user)}
-            else:
-                return {"status": "fail", "message": "User not found."}
-
-        return {"status": "fail", "message": "Session expired."}
+            if session_time > time_now:
+                user = find_user_db(request.form["user_id"])
+                if user:
+                    return {"status": "success", "user": str(user)}
+                else:
+                    return {"status": "fail", "message": "User not found."}
+            
+            remove_session_db(request.cookies["session-id"])
+            return {"status": "fail", "message": "Session expired."}
+        
+        return  {"status": "fail", "message": "Session not found."}
     else:
         return {"status": "fail", "message": "Send session in request."}
