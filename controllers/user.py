@@ -1,6 +1,8 @@
+from .session import Session
+
 class User:
     def __init__(self, username, password):
-        self.__user_id = 1
+        self.__user_id = Session.get_random_string(8)
         self.__username = username
         self.__password = password
         self.__isActive = False
